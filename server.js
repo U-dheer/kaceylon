@@ -196,6 +196,16 @@ connectWithRetry();
 // Routes
 app.use('/api/auth', authRoutes);
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: 'Server is healthy',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+    });
+});
+
 
 // 404 handler
 app.use('*', (req, res, next) => {

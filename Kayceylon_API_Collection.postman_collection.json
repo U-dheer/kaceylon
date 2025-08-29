@@ -1,0 +1,1617 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Kayceylon API Complete Collection",
+		"description": "Complete API collection for Kayceylon backend with authentication, forms, subscriptions, and blog management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12345678"
+	},
+	"item": [
+		{
+			"name": "🏥 Health Check",
+			"item": [
+				{
+					"name": "Check Server Health",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has success property\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('success', true);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 1000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"health"
+							]
+						},
+						"description": "Check if the server is running and responding properly"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/health",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"health"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Server is running\",\n  \"timestamp\": \"2025-08-28T10:30:45.123Z\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Health check endpoints for server status verification"
+		},
+		{
+			"name": "🔑 Authentication",
+			"item": [
+				{
+					"name": "Register Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response has access token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('accessToken');",
+									"    ",
+									"    // Store access token for future requests",
+									"    pm.environment.set(\"accessToken\", jsonData.data.accessToken);",
+									"});",
+									"",
+									"pm.test(\"Admin object is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('admin');",
+									"    pm.expect(jsonData.data.admin).to.have.property('email');",
+									"    pm.expect(jsonData.data.admin).to.not.have.property('password');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"{{adminName}}\",\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\",\n  \"role\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new admin account"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"John Admin\",\n  \"email\": \"admin@kayceylon.com\",\n  \"password\": \"SecurePass123!\",\n  \"role\": \"admin\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Admin registered successfully\",\n  \"data\": {\n    \"admin\": {\n      \"_id\": \"66cf2a1b8e4d5f123456789a\",\n      \"name\": \"John Admin\",\n      \"email\": \"admin@kayceylon.com\",\n      \"role\": \"admin\",\n      \"isActive\": true,\n      \"createdAt\": \"2025-08-28T10:30:45.123Z\"\n    },\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has access token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('accessToken');",
+									"    ",
+									"    // Store access token for future requests",
+									"    pm.environment.set(\"accessToken\", jsonData.data.accessToken);",
+									"});",
+									"",
+									"pm.test(\"Login successful message\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql('Login successful');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with admin credentials"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"admin@kayceylon.com\",\n  \"password\": \"SecurePass123!\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"admin\": {\n      \"_id\": \"66cf2a1b8e4d5f123456789a\",\n      \"name\": \"John Admin\",\n      \"email\": \"admin@kayceylon.com\",\n      \"role\": \"admin\",\n      \"isActive\": true,\n      \"lastLogin\": \"2025-08-28T10:35:22.456Z\"\n    },\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has new access token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('accessToken');",
+									"    ",
+									"    // Update stored access token",
+									"    pm.environment.set(\"accessToken\", jsonData.data.accessToken);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/refresh",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Refresh access token using refresh token cookie"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/refresh",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"refresh"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Token refreshed successfully\",\n  \"data\": {\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Logout Admin",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set Authorization header with access token",
+									"if (pm.environment.get(\"accessToken\")) {",
+									"    pm.request.headers.add({",
+									"        key: \"Authorization\",",
+									"        value: \"Bearer \" + pm.environment.get(\"accessToken\")",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Logout successful\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql('Logged out successfully');",
+									"    ",
+									"    // Clear stored access token",
+									"    pm.environment.unset(\"accessToken\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout and revoke refresh token"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/logout",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Logged out successfully\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Authentication endpoints for admin registration, login, token refresh, and logout"
+		},
+		{
+			"name": "📝 Forms Management",
+			"item": [
+				{
+					"name": "Submit Contact Form",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Form submitted successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('success');",
+									"    pm.expect(jsonData.data).to.have.property('_id');",
+									"    ",
+									"    // Store form ID for testing",
+									"    pm.environment.set(\"lastFormId\", jsonData.data._id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cNameOrName\": \"{{contactName}}\",\n  \"email\": \"{{contactEmail}}\",\n  \"message\": \"{{contactMessage}}\",\n  \"phone\": \"{{contactPhone}}\",\n  \"address\": \"{{contactAddress}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/makeAForm",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"makeAForm"
+							]
+						},
+						"description": "Submit a contact form (public endpoint)"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"cNameOrName\": \"John Doe Company\",\n  \"email\": \"contact@example.com\",\n  \"message\": \"I'm interested in your services. Please contact me for a consultation.\",\n  \"phone\": \"+1-555-123-4567\",\n  \"address\": \"123 Business St, City, State 12345\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/makeAForm",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"makeAForm"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"_id\": \"66cf2b1c8e4d5f123456789b\",\n    \"cNameOrName\": \"John Doe Company\",\n    \"email\": \"contact@example.com\",\n    \"message\": \"I'm interested in your services. Please contact me for a consultation.\",\n    \"phone\": \"+1-555-123-4567\",\n    \"address\": \"123 Business St, City, State 12345\",\n    \"read\": false,\n    \"createdAt\": \"2025-08-28T10:40:15.789Z\",\n    \"__v\": 0\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Forms (Admin)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set Authorization header with access token",
+									"if (pm.environment.get(\"accessToken\")) {",
+									"    pm.request.headers.add({",
+									"        key: \"Authorization\",",
+									"        value: \"Bearer \" + pm.environment.get(\"accessToken\")",
+									"    });",
+									"} else {",
+									"    throw new Error(\"Access token not found. Please login first.\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Forms retrieved successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('success');",
+									"    pm.expect(jsonData).to.have.property('results');",
+									"    pm.expect(jsonData).to.have.property('data');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/getAllForms",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"getAllForms"
+							]
+						},
+						"description": "Get all submitted forms (Admin only)"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/getAllForms",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"getAllForms"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"success\",\n  \"results\": 2,\n  \"data\": [\n    {\n      \"_id\": \"66cf2b1c8e4d5f123456789b\",\n      \"cNameOrName\": \"John Doe Company\",\n      \"email\": \"contact@example.com\",\n      \"message\": \"I'm interested in your services...\",\n      \"phone\": \"+1-555-123-4567\",\n      \"address\": \"123 Business St, City, State 12345\",\n      \"read\": false,\n      \"createdAt\": \"2025-08-28T10:40:15.789Z\"\n    }\n  ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get One Form (Admin)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set Authorization header with access token",
+									"if (pm.environment.get(\"accessToken\")) {",
+									"    pm.request.headers.add({",
+									"        key: \"Authorization\",",
+									"        value: \"Bearer \" + pm.environment.get(\"accessToken\")",
+									"    });",
+									"} else {",
+									"    throw new Error(\"Access token not found. Please login first.\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Form marked as read\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('success');",
+									"    pm.expect(jsonData.data.read).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/getOneForm/{{lastFormId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"getOneForm",
+								"{{lastFormId}}"
+							]
+						},
+						"description": "Get specific form and mark as read (Admin only)"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/getOneForm/66cf2b1c8e4d5f123456789b",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"getOneForm",
+										"66cf2b1c8e4d5f123456789b"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"_id\": \"66cf2b1c8e4d5f123456789b\",\n    \"cNameOrName\": \"John Doe Company\",\n    \"email\": \"contact@example.com\",\n    \"message\": \"I'm interested in your services. Please contact me for a consultation.\",\n    \"phone\": \"+1-555-123-4567\",\n    \"address\": \"123 Business St, City, State 12345\",\n    \"read\": true,\n    \"createdAt\": \"2025-08-28T10:40:15.789Z\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Form (Admin)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set Authorization header with access token",
+									"if (pm.environment.get(\"accessToken\")) {",
+									"    pm.request.headers.add({",
+									"        key: \"Authorization\",",
+									"        value: \"Bearer \" + pm.environment.get(\"accessToken\")",
+									"    });",
+									"} else {",
+									"    throw new Error(\"Access token not found. Please login first.\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Form deleted successfully\", function () {",
+									"    // 204 No Content - no response body",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/deleteForm/{{lastFormId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"deleteForm",
+								"{{lastFormId}}"
+							]
+						},
+						"description": "Delete specific form (Admin only)"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/deleteForm/66cf2b1c8e4d5f123456789b",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"deleteForm",
+										"66cf2b1c8e4d5f123456789b"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			],
+			"description": "Form management endpoints for contact form submission and admin operations"
+		},
+		{
+			"name": "📧 Email Subscriptions",
+			"item": [
+				{
+					"name": "Subscribe to Newsletter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Subscription successful\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('success');",
+									"    pm.expect(jsonData.data).to.have.property('email');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{subscriberEmail}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/callToAction",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"callToAction"
+							]
+						},
+						"description": "Subscribe to email updates (public endpoint)"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"subscriber@example.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/callToAction",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"callToAction"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"_id\": \"66cf2c1d8e4d5f123456789d\",\n    \"email\": \"subscriber@example.com\",\n    \"createdAt\": \"2025-08-28T10:45:30.456Z\",\n    \"__v\": 0\n  }\n}"
+						},
+						{
+							"name": "Duplicate Email Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"subscriber@example.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/callToAction",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"callToAction"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"message\": \"Email is already subscribed\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Email subscription management for newsletter signups"
+		},
+		{
+			"name": "📰 Blog Management",
+			"item": [
+				{
+					"name": "Create Blog Post (Admin)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set Authorization header with access token",
+									"if (pm.environment.get(\"accessToken\")) {",
+									"    pm.request.headers.add({",
+									"        key: \"Authorization\",",
+									"        value: \"Bearer \" + pm.environment.get(\"accessToken\")",
+									"    });",
+									"} else {",
+									"    throw new Error(\"Access token not found. Please login first.\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Blog created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('success');",
+									"    pm.expect(jsonData.data).to.have.property('_id');",
+									"    pm.expect(jsonData.data).to.have.property('photo');",
+									"    ",
+									"    // Store blog ID for testing",
+									"    pm.environment.set(\"lastBlogId\", jsonData.data._id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "{{blogTitle}}",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "{{blogContent}}",
+									"type": "text"
+								},
+								{
+									"key": "link",
+									"value": "{{blogLink}}",
+									"type": "text"
+								},
+								{
+									"key": "photos",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/makeABlog",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"makeABlog"
+							]
+						},
+						"description": "Create a new blog post with images (Admin only) - Note: Enable and add actual image files to 'photos' field"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "Latest Technology Trends in 2025",
+											"type": "text"
+										},
+										{
+											"key": "content",
+											"value": "In this comprehensive guide, we explore the cutting-edge technologies...",
+											"type": "text"
+										},
+										{
+											"key": "link",
+											"value": "https://kayceylon.com/blog/tech-trends-2025",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/makeABlog",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"makeABlog"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"_id\": \"66cf2d1e8e4d5f123456789e\",\n    \"title\": \"Latest Technology Trends in 2025\",\n    \"content\": \"In this comprehensive guide, we explore the cutting-edge technologies...\",\n    \"link\": \"https://kayceylon.com/blog/tech-trends-2025\",\n    \"photo\": [\n      {\n        \"url\": \"https://res.cloudinary.com/demo/image/upload/v1693234567/kayceylon/blogs/sample1.jpg\",\n        \"public_id\": \"kayceylon/blogs/sample1\",\n        \"_id\": \"66cf2d1e8e4d5f123456789f\"\n      }\n    ],\n    \"createdAt\": \"2025-08-28T10:50:45.789Z\",\n    \"__v\": 0\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Blogs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Blogs retrieved successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('success');",
+									"    pm.expect(jsonData).to.have.property('results');",
+									"    pm.expect(jsonData).to.have.property('data');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/getAllBlogs",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"getAllBlogs"
+							]
+						},
+						"description": "Get all blog posts (public endpoint)"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/getAllBlogs",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"getAllBlogs"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"success\",\n  \"results\": 2,\n  \"data\": [\n    {\n      \"_id\": \"66cf2d1e8e4d5f123456789e\",\n      \"title\": \"Latest Technology Trends in 2025\",\n      \"content\": \"In this comprehensive guide...\",\n      \"link\": \"https://kayceylon.com/blog/tech-trends-2025\",\n      \"photo\": [\n        {\n          \"url\": \"https://res.cloudinary.com/demo/image/upload/v1693234567/kayceylon/blogs/sample1.jpg\",\n          \"public_id\": \"kayceylon/blogs/sample1\"\n        }\n      ],\n      \"createdAt\": \"2025-08-28T10:50:45.789Z\"\n    }\n  ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get One Blog",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Blog retrieved successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('success');",
+									"    pm.expect(jsonData.data).to.have.property('_id');",
+									"    pm.expect(jsonData.data).to.have.property('title');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/getOneBlog/{{lastBlogId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"getOneBlog",
+								"{{lastBlogId}}"
+							]
+						},
+						"description": "Get specific blog post (public endpoint)"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/getOneBlog/66cf2d1e8e4d5f123456789e",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"getOneBlog",
+										"66cf2d1e8e4d5f123456789e"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"_id\": \"66cf2d1e8e4d5f123456789e\",\n    \"title\": \"Latest Technology Trends in 2025\",\n    \"content\": \"In this comprehensive guide, we explore the cutting-edge technologies...\",\n    \"link\": \"https://kayceylon.com/blog/tech-trends-2025\",\n    \"photo\": [\n      {\n        \"url\": \"https://res.cloudinary.com/demo/image/upload/v1693234567/kayceylon/blogs/sample1.jpg\",\n        \"public_id\": \"kayceylon/blogs/sample1\",\n        \"_id\": \"66cf2d1e8e4d5f123456789f\"\n      }\n    ],\n    \"createdAt\": \"2025-08-28T10:50:45.789Z\",\n    \"__v\": 0\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Blog Post (Admin)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set Authorization header with access token",
+									"if (pm.environment.get(\"accessToken\")) {",
+									"    pm.request.headers.add({",
+									"        key: \"Authorization\",",
+									"        value: \"Bearer \" + pm.environment.get(\"accessToken\")",
+									"    });",
+									"} else {",
+									"    throw new Error(\"Access token not found. Please login first.\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Blog updated successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('success');",
+									"    pm.expect(jsonData.data).to.have.property('_id');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Updated: {{blogTitle}}",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "Updated content: {{blogContent}}",
+									"type": "text"
+								},
+								{
+									"key": "link",
+									"value": "{{blogLink}}",
+									"type": "text"
+								},
+								{
+									"key": "photos",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/updateBlog/{{lastBlogId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"updateBlog",
+								"{{lastBlogId}}"
+							]
+						},
+						"description": "Update blog post (Admin only) - Note: Enable and add actual image files to 'photos' field to replace existing images"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "Updated: Latest Technology Trends in 2025",
+											"type": "text"
+										},
+										{
+											"key": "content",
+											"value": "Updated content with new insights...",
+											"type": "text"
+										},
+										{
+											"key": "link",
+											"value": "https://kayceylon.com/blog/updated-tech-trends-2025",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/updateBlog/66cf2d1e8e4d5f123456789e",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"updateBlog",
+										"66cf2d1e8e4d5f123456789e"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"_id\": \"66cf2d1e8e4d5f123456789e\",\n    \"title\": \"Updated: Latest Technology Trends in 2025\",\n    \"content\": \"Updated content with new insights...\",\n    \"link\": \"https://kayceylon.com/blog/updated-tech-trends-2025\",\n    \"photo\": [\n      {\n        \"url\": \"https://res.cloudinary.com/demo/image/upload/v1693234570/kayceylon/blogs/updated1.jpg\",\n        \"public_id\": \"kayceylon/blogs/updated1\",\n        \"_id\": \"66cf2d1e8e4d5f12345678a1\"\n      }\n    ],\n    \"createdAt\": \"2025-08-28T10:50:45.789Z\",\n    \"updatedAt\": \"2025-08-28T11:15:30.123Z\",\n    \"__v\": 0\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Blog Post (Admin)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set Authorization header with access token",
+									"if (pm.environment.get(\"accessToken\")) {",
+									"    pm.request.headers.add({",
+									"        key: \"Authorization\",",
+									"        value: \"Bearer \" + pm.environment.get(\"accessToken\")",
+									"    });",
+									"} else {",
+									"    throw new Error(\"Access token not found. Please login first.\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Blog deleted successfully\", function () {",
+									"    // 204 No Content - no response body",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/deleteBlog/{{lastBlogId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"deleteBlog",
+								"{{lastBlogId}}"
+							]
+						},
+						"description": "Delete blog post and associated images (Admin only)"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/deleteBlog/66cf2d1e8e4d5f123456789e",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"deleteBlog",
+										"66cf2d1e8e4d5f123456789e"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			],
+			"description": "Blog management endpoints for creating, reading, updating, and deleting blog posts with image uploads"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global pre-request script",
+					"// This runs before every request in the collection",
+					"",
+					"// Set default headers if not already set",
+					"if (!pm.request.headers.has('Content-Type') && pm.request.method !== 'GET' && pm.request.method !== 'DELETE') {",
+					"    if (pm.request.body && pm.request.body.mode !== 'formdata') {",
+					"        pm.request.headers.add({",
+					"            key: 'Content-Type',",
+					"            value: 'application/json'",
+					"        });",
+					"    }",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global test script",
+					"// This runs after every request in the collection",
+					"",
+					"// Test response time",
+					"pm.test(\"Response time is acceptable\", function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+					"});",
+					"",
+					"// Test that we get a response",
+					"pm.test(\"Response received\", function () {",
+					"    pm.response.to.be.ok;",
+					"});",
+					"",
+					"// Log response for debugging (can be removed in production)",
+					"console.log('Response Status:', pm.response.code);",
+					"console.log('Response Time:', pm.response.responseTime + 'ms');"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "adminName",
+			"value": "John Admin",
+			"type": "string"
+		},
+		{
+			"key": "adminEmail",
+			"value": "admin@kayceylon.com",
+			"type": "string"
+		},
+		{
+			"key": "adminPassword",
+			"value": "SecurePass123!",
+			"type": "string"
+		},
+		{
+			"key": "contactName",
+			"value": "John Doe Company",
+			"type": "string"
+		},
+		{
+			"key": "contactEmail",
+			"value": "contact@example.com",
+			"type": "string"
+		},
+		{
+			"key": "contactMessage",
+			"value": "I'm interested in your services. Please contact me for a consultation.",
+			"type": "string"
+		},
+		{
+			"key": "contactPhone",
+			"value": "+1-555-123-4567",
+			"type": "string"
+		},
+		{
+			"key": "contactAddress",
+			"value": "123 Business St, City, State 12345",
+			"type": "string"
+		},
+		{
+			"key": "subscriberEmail",
+			"value": "subscriber@example.com",
+			"type": "string"
+		},
+		{
+			"key": "blogTitle",
+			"value": "Latest Technology Trends in 2025",
+			"type": "string"
+		},
+		{
+			"key": "blogContent",
+			"value": "In this comprehensive guide, we explore the cutting-edge technologies that are shaping the future of business and society. From artificial intelligence to quantum computing, these innovations are transforming how we work, communicate, and solve complex problems.",
+			"type": "string"
+		},
+		{
+			"key": "blogLink",
+			"value": "https://kayceylon.com/blog/tech-trends-2025",
+			"type": "string"
+		}
+	]
+}
