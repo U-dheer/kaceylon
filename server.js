@@ -14,10 +14,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config({ path: './config.env' });
 
-// Import routes
+// Import routes and utilities
 import authRoutes from './routes/authRouter.js';
 import RefreshToken from './models/refreshTokenModel.js';
 import globalErrorHandler from './controllers/errorController.js';
+import AppError from './utils/AppError.js'; // Add this import
 
 const app = express();
 
@@ -196,6 +197,31 @@ connectWithRetry();
 // Routes
 app.use('/api/auth', authRoutes);
 
+// Root route - API information
+app.get('/', (req, res) => {
+    res.status(200).json({
+        status: 'success',
+        message: 'Kaceylon API Server is running',
+        version: '1.0.0',
+        server: 'Express.js',
+        timestamp: new Date().toISOString(),
+        endpoints: {
+            auth: '/api/auth',
+            health: '/api/health',
+            documentation: 'API endpoints available at /api/auth'
+        },
+        availableRoutes: [
+            'POST /api/auth/register - User registration',
+            'POST /api/auth/login - User login',
+            'POST /api/auth/callToAction - Email subscription',
+            'POST /api/auth/makeAForm - Contact form submission',
+            'GET /api/auth/getAllBlogs - Get all blogs',
+            'GET /api/auth/getOneBlog/:id - Get single blog',
+            'GET /api/health - Health check'
+        ]
+    });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.status(200).json({
@@ -206,12 +232,20 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// Handle favicon.ico requests (common browser request)
+app.get('/favicon.ico', (req, res) => {
+    res.status(204).end(); // No content
+});
 
-// 404 handler
-app.use('*', (req, res, next) => {
-    const error = new Error(`Route ${req.originalUrl} not found`);
-    error.statusCode = 404;
-    next(error);
+// Handle robots.txt requests (common for web crawlers)
+app.get('/robots.txt', (req, res) => {
+    res.type('text/plain');
+    res.send('User-agent: *\nDisallow: /');
+});
+
+// 404 handler - MUST be after all route definitions
+app.all('*', (req, res, next) => {
+    next(new AppError(`Route ${req.originalUrl} not found`, 404));
 });
 
 // Centralized error handler
