@@ -451,5 +451,15 @@ const getOneBlog = asyncHandler(async (req, res, next) => {
     })
 })
 
+const getAllCallToActions = asyncHandler(async (req, res, next) => {
+    const calls = await CallToAction.find().sort({ createdAt: -1 });
 
-export { makeAForm, getAllForms, getOneForm, deleteForm, callToAction, makeABlog, getAllBlogs, updateBlog, deleteBlog, getOneBlog }
+    res.status(200).json({
+        status: "success",
+        results: calls.length,
+        data: calls
+    });
+});
+
+
+export { makeAForm, getAllForms, getOneForm, deleteForm, callToAction, makeABlog, getAllBlogs, updateBlog, deleteBlog, getOneBlog, getAllCallToActions }

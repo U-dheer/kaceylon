@@ -19,7 +19,7 @@ router.delete('/deleteForm/:id', authController.protect, authController.authoriz
 
 
 router.post('/callToAction', operationController.callToAction);
-
+router.get('/getAllCallToActions', operationController.getAllCallToActions);
 
 router.post('/makeABlog', authController.protect, upload.array('photos', 6), authController.authorize('admin'), operationController.makeABlog);
 router.get('/getAllBlogs', operationController.getAllBlogs);
